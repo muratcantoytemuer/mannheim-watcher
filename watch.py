@@ -9,7 +9,9 @@ import os
 import sys
 import time
 import logging
+import threading
 import requests
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from bs4 import BeautifulSoup
 
 # ── Konfiguration aus Umgebungsvariablen ──────────────────────────────────────
@@ -214,4 +216,17 @@ def run():
 
 
 if __name__ == "__main__":
+    # Kleiner HTTP-Server damit Render den Port-Check besteht
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Mannheim Watcher running")
+        def log_message(self, *args):
+            pass
+
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+
     run()
