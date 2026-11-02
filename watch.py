@@ -216,7 +216,7 @@ def run():
 
 
 if __name__ == "__main__":
-    # Kleiner HTTP-Server damit Render den Port-Check besteht
+    # HTTP-Server damit Render den Port-Check besteht und nicht schläft
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             self.send_response(200)
@@ -228,5 +228,16 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     server = HTTPServer(("0.0.0.0", port), Handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
+
+    # Selbst-Ping alle 10 Minuten damit Render nicht schläft
+    def self_ping():
+        url = os.environ.get("RENDER_EXTERNAL_URL", f"http://localhost:{port}")
+        while True:
+            time.sleep(600)
+            try:
+                requests.get(url, timeout=5)
+            except Exception:
+                pass
+    threading.Thread(target=self_ping, daemon=True).start()
 
     run()
