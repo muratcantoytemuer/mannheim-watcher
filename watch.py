@@ -20,7 +20,7 @@ NACHNAME         = os.environ["NACHNAME"]
 MOBIL            = os.environ["MOBIL"]
 EMAIL            = os.environ["EMAIL"]
 
-POLL_INTERVAL = 300  # 5 Minuten
+POLL_INTERVAL = 60  # 1 Minute
 BASE_URL      = "https://tempus-termine.com/termine/index.php"
 ANLAGEN_NR    = 36
 OPTION_ID     = "EHE_DT-11887-mittermin"  # Anmeldung Eheschließung - Deutsche
